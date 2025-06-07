@@ -22,21 +22,61 @@ const displayNSticks = amount => {
 }
 
 const updateToTheNextPlayer = () => {
-    // @TODO MAKE ME
-    // Update the amount of sticks displayed to the players
-    // Tell who is the next player or if anyone won, end the game (hint: you can call endTheGame function)
+    // Clear current sticks display
+    document.getElementById(STICKS_ID).innerHTML = '';
+    
+    // Display remaining sticks
+    displayNSticks(amountStick);
+    
+    // Check if game is over (no sticks left)
+    if (amountStick === 0) {
+        // Current player wins (they took the last stick)
+        const currentPlayer = document.querySelector(`.${ACTIVE_PLAYER_CLASS}`);
+        endTheGame(currentPlayer.id);
+        return;
+    }
+    
+    // Switch to next player
+    const playerOne = document.getElementById(PLAYER_ONE_ID);
+    const playerTwo = document.getElementById(PLAYER_TWO_ID);
+    
+    playerOne.classList.toggle(ACTIVE_PLAYER_CLASS);
+    playerTwo.classList.toggle(ACTIVE_PLAYER_CLASS);
 }
 
 const endTheGame = winnerPlayerId => {
-    // @TODO MAKE ME
-    // Show the winner
-    // Make sure players can not try to remove sticks anymore
+    // Show the winner by adding winner class
+    document.getElementById(winnerPlayerId).classList.add(WINNER_PLAYER_CLASS);
+    
+    // Disable all buttons so players can't continue playing
+    document.getElementById(BUTTON_ONE_ID).disabled = true;
+    document.getElementById(BUTTON_TWO_ID).disabled = true;
+    document.getElementById(BUTTON_THREE_ID).disabled = true;
+    
+    // Optional: Add a congratulations message
+    const winnerName = document.getElementById(winnerPlayerId).textContent;
+    alert(`🎉 ${winnerName} wins the game! 🎉`);
 }
 
-// @TODO MAKE ME
-// React to click on buttons
-// On a click, remove the amount of sticks displayed by the button
-// Update the game for the next player (hint: you can call updateToTheNextPlayer function)
+// Button click handlers
+const handleButtonClick = (sticksToRemove) => {
+    // Check if we can remove the requested amount
+    if (sticksToRemove > amountStick) {
+        alert(`You can't remove ${sticksToRemove} sticks. Only ${amountStick} left!`);
+        return;
+    }
+    
+    // Remove the sticks
+    amountStick -= sticksToRemove;
+    
+    // Update the game for next player
+    updateToTheNextPlayer();
+};
+
+// Add event listeners to buttons
+document.getElementById(BUTTON_ONE_ID).addEventListener('click', () => handleButtonClick(1));
+document.getElementById(BUTTON_TWO_ID).addEventListener('click', () => handleButtonClick(2));
+document.getElementById(BUTTON_THREE_ID).addEventListener('click', () => handleButtonClick(3));
 
 // ========== Start the game
 // Display the start sticks
